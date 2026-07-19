@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="fr" data-theme="soft">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>howdrawabox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="src/ui/styles.css">
+</head>
+<body>
+
+<!-- =================== ACCUEIL / PARCOURS =================== -->
+<section id="home">
+  <header class="appbar">
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 24 24"><path d="M4 20 20 4M4 20l3-9 9-3"/></svg></div>
+      <span>howdrawabox</span>
+    </div>
+    <nav class="tabs" id="homeTabs">
+      <button data-tab="cours" class="on">Cours</button>
+      <button data-tab="challenges">Challenges</button>
+    </nav>
+    <div class="spacer"></div>
+    <button class="btn primary" id="btnDrawFree">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Dessin libre
+    </button>
+    <button class="btn icon-btn" data-theme-toggle title="Thème"></button>
+    <div class="lang"><button data-lang="fr">FR</button><button data-lang="en">EN</button></div>
+  </header>
+  <div class="scroll">
+    <div class="inner" id="homeInner"></div>
+  </div>
+</section>
+
+<!-- =================== PRATIQUE =================== -->
+<section id="practice" hidden>
+  <div class="topbar">
+    <button class="btn ghost" data-back><svg class="ic" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Retour</button>
+    <div class="sep"></div>
+    <div><div class="title" id="pTitle"></div><div class="sub" id="pSub"></div></div>
+    <div class="spacer"></div>
+    <button class="btn" id="btnConsigne"><svg class="ic" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></svg>Consigne</button>
+    <button class="btn" data-video-toggle hidden><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg>Vidéo</button>
+    <div class="seg" id="lenSeg">
+      <button data-len="0.05">Court</button><button data-len="0.35" class="on">Moyen</button><button data-len="0.7">Long</button>
+    </div>
+    <div class="seg" id="brushSeg" title="Brosse">
+      <button data-brush="ink" class="on">Plume</button><button data-brush="marker">Feutre</button><button data-brush="pencil">Crayon</button><button data-brush="chalk">Craie</button><button data-brush="watercolor">Aquarelle</button>
+    </div>
+    <label class="gauge" id="penWidthWrap" title="Taille de la plume">
+      <span>Taille</span>
+      <input type="range" id="penWidth" min="0.5" max="16" value="3.5" step="0.5">
+      <span class="gval mono" id="penWidthVal">3.5</span>
+    </label>
+    <label class="gauge" id="penOpacityWrap" title="Opacité du trait">
+      <span>Opacité</span>
+      <input type="range" id="penOpacity" min="0.05" max="1" value="1" step="0.05">
+      <span class="gval mono" id="penOpacityVal">100%</span>
+    </label>
+    <button class="btn icon-btn" id="btnEraser" title="Gomme — glisser sur un trait pour l'effacer"><svg class="ic" viewBox="0 0 24 24"><path d="M4 15.5 12.5 7l5 5-6.5 6.5H7z"/><path d="M8.5 20h11"/></svg></button>
+    <div class="lang"><button data-lang="fr">FR</button><button data-lang="en">EN</button></div>
+    <button class="btn icon-btn" data-theme-toggle title="Thème"></button>
+    <button class="btn" id="btnDone"></button>
+    <button class="btn icon-btn" id="btnUndo" title="Annuler le dernier trait"><svg class="ic" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10H9"/></svg></button>
+    <button class="btn icon-btn" id="btnReset" title="Reset"><svg class="ic" viewBox="0 0 24 24"><path d="M4 4v6h6M20 20v-6h-6"/><path d="M20 10a8 8 0 0 0-14-4M4 14a8 8 0 0 0 14 4"/></svg></button>
+    <button class="btn primary" id="btnNew"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span id="btnNewLabel">Nouvelle cible</span></button>
+  </div>
+
+  <div id="work">
+    <div class="consigne-wrap">
+      <div class="consigne-head"><span>Consigne</span>
+        <button class="btn ghost" id="btnConsigneClose">Fermer</button></div>
+      <div class="article" id="pConsigne" style="padding:18px 20px;overflow:auto"></div>
+    </div>
+
+    <div class="canvas" id="stage">
+      <div class="grid"></div>
+      <canvas id="c"></canvas>
+      <div class="chip" id="chipTraits" style="top:16px;left:16px" hidden></div>
+      <div class="chip" id="chipFray" style="top:16px;left:220px" hidden></div>
+      <div class="chip" id="chipHint" style="bottom:16px;left:16px;color:var(--tx-mid)"></div>
+      <div id="pipManagerHost"></div>
+    </div>
+
+    <aside class="panel" id="panel">
+      <div class="pscroll">
+        <!-- dessin libre : exercice sans analyse -->
+        <div class="empty" id="panelFree" hidden>
+          <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          <div class="t">Dessine librement</div>
+          <div class="d" id="freeHint"></div>
+        </div>
+
+        <!-- état vide -->
+        <div class="empty" id="panelEmpty">
+          <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          <div class="t">En attente de traits…</div>
+          <div class="d" id="emptyHint"></div>
+        </div>
+        <!-- résultat -->
+        <div id="panelResult" hidden>
+          <div class="score-hd" id="scoreHd">
+            <div>
+              <div class="eyebrow" id="scoreLabel">Score du trait</div>
+              <div style="display:flex;align-items:baseline;gap:6px">
+                <span class="score-num" id="scoreNum" style="font-size:62px">0</span>
+                <span class="mono" style="font-size:15px;color:var(--tx-lo)">/100</span>
+              </div>
+            </div>
+            <div style="text-align:right">
+              <div class="badge" id="scoreBadge"><span class="dot"></span><span></span></div>
+              <div class="sub" id="scoreMeta"></div>
+            </div>
+          </div>
+          <div class="scorebar" id="scoreBar"><i style="width:0"></i></div>
+
+          <div class="qualities" id="qualities"></div>
+
+          <button class="btn ghost detail-toggle" id="detailToggle" aria-expanded="false">
+            <span>Voir le détail des mesures</span>
+            <svg class="ic chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div id="detail" hidden></div>
+
+          <div class="eyebrow" style="margin-bottom:10px">Feedback</div>
+          <div id="feedback" style="display:flex;flex-direction:column;gap:9px"></div>
+        </div>
+      </div>
+      <div class="foot" id="panelFoot" hidden>
+        <div><div class="eyebrow">Session</div><div class="mono" id="sessionStat" style="font-size:12px;color:var(--tx-mid);margin-top:4px"></div></div>
+        <div class="dots" id="sessionDots"></div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- =================== LECTURE =================== -->
+<section id="reading" hidden>
+  <div class="topbar">
+    <button class="btn ghost" data-back><svg class="ic" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Retour</button>
+    <div class="sep"></div>
+    <div class="title" id="rTitle"></div>
+    <div class="spacer"></div>
+    <button class="btn primary" id="btnLessonDraw" title="Dessiner en gardant la page de leçon sous la main">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Dessin
+    </button>
+    <div class="lang"><button data-lang="fr">FR</button><button data-lang="en">EN</button></div>
+    <button class="btn icon-btn" data-theme-toggle title="Thème"></button>
+  </div>
+  <div class="banner" id="rBanner" hidden>
+    <svg viewBox="0 0 24 24"><path d="M12 8v5M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg>
+    Traduction française à venir — cette page est affichée en anglais.
+  </div>
+  <div class="rbody">
+    <nav class="rtoc" id="rToc"></nav>
+    <div class="scroll" id="rScroll">
+      <article class="article" id="rArticle"></article>
+      <div class="rnav" id="rNav"></div>
+    </div>
+  </div>
+</section>
+
+<script type="module" src="src/ui/app.js"></script>
+</body>
+</html>

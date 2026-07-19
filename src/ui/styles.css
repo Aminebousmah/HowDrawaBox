@@ -1,0 +1,423 @@
+/* ============================================================================
+   Drawabox Trainer — système visuel (d'après le handoff Claude Design)
+   Thèmes : soft (défaut, chaleureux) · dark (nuit) · light
+   Tokens appliqués sur <html data-theme="...">
+   ============================================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --sans: "IBM Plex Sans", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ---- thèmes ---- */
+:root[data-theme="soft"] {
+  --bg0:#f2efe8; --bg1:#faf8f3; --bg2:#ffffff; --bg3:#f2eee6; --line:#e7e1d5; --line2:#d9d2c3;
+  --tx-hi:#2b2721; --tx-mid:#6d6659; --tx-lo:#9b9284;
+  --paper:#ffffff; --paper-grid:#ece7db; --paper-ink:#33322f;
+  --good:oklch(0.60 0.13 150); --mid:oklch(0.70 0.13 74); --bad:oklch(0.58 0.17 30);
+  --accent:oklch(0.55 0.13 258); --accent-ink:#ffffff;
+}
+:root[data-theme="dark"] {
+  --bg0:#141619; --bg1:#191c21; --bg2:#20242b; --bg3:#282d36; --line:#2f353f; --line2:#3b424d;
+  --tx-hi:#e8eaef; --tx-mid:#a4abb8; --tx-lo:#6d7581;
+  --paper:#e9e6de; --paper-grid:#d5d0c4; --paper-ink:#3a3a38;
+  --good:oklch(0.75 0.14 152); --mid:oklch(0.80 0.13 86); --bad:oklch(0.68 0.16 28);
+  --accent:oklch(0.74 0.11 232); --accent-ink:#07141c;
+}
+:root[data-theme="light"] {
+  --bg0:#e9ecf0; --bg1:#f4f6f8; --bg2:#ffffff; --bg3:#f0f2f5; --line:#dee2e8; --line2:#ccd2db;
+  --tx-hi:#1b2028; --tx-mid:#59616d; --tx-lo:#8b93a0;
+  --paper:#ffffff; --paper-grid:#e7e3d8; --paper-ink:#33322f;
+  --good:oklch(0.58 0.15 152); --mid:oklch(0.66 0.14 78); --bad:oklch(0.57 0.19 28);
+  --accent:oklch(0.55 0.13 245); --accent-ink:#ffffff;
+}
+
+html, body { margin:0; height:100%; }
+body {
+  background:var(--bg0); color:var(--tx-hi); font-family:var(--sans); font-size:14px; line-height:1.45;
+  overflow:hidden; -webkit-user-select:none; user-select:none;
+  transition:background .25s, color .25s;
+}
+[hidden] { display:none !important; }
+.mono { font-family:var(--mono); font-variant-numeric:tabular-nums; }
+.row { display:flex; align-items:center; }
+.spacer { flex:1; }
+.eyebrow { font:600 10.5px var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--tx-lo); }
+
+/* ---- boutons / contrôles ---- */
+.btn { height:42px; padding:0 15px; border-radius:9px; border:1px solid var(--line2); background:var(--bg2);
+  color:var(--tx-hi); font:500 13px var(--sans); display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+  white-space:nowrap; }
+.btn:hover { border-color:var(--accent); }
+.btn.primary { background:var(--accent); color:var(--accent-ink); border-color:transparent; font-weight:600; }
+.btn.ghost { background:transparent; border-color:transparent; color:var(--tx-mid); padding:0 11px; }
+.btn.sm { height:36px; font-size:12.5px; }
+.btn .ic { width:15px; height:15px; stroke:currentColor; stroke-width:1.7; fill:none; }
+.icon-btn { width:42px; height:42px; padding:0; justify-content:center; }
+
+.seg { display:inline-flex; background:var(--bg2); border:1px solid var(--line); border-radius:10px; padding:3px; gap:2px; }
+.seg button { height:36px; min-width:56px; padding:0 12px; border:0; background:transparent; color:var(--tx-mid);
+  border-radius:7px; font:500 12.5px var(--sans); cursor:pointer; }
+.seg button.on { background:var(--bg3); color:var(--tx-hi); box-shadow:0 1px 2px rgba(0,0,0,.25), inset 0 0 0 1px var(--line2); }
+
+/* Jauge de la barre d'outils (taille de plume, opacité) */
+.gauge { display:inline-flex; align-items:center; gap:9px; height:42px; padding:0 12px; flex:none;
+  background:var(--bg2); border:1px solid var(--line); border-radius:10px;
+  font:500 11.5px var(--sans); color:var(--tx-lo); cursor:pointer; }
+.gauge[hidden] { display:none; }
+.gauge .gval { font-size:11px; color:var(--tx-mid); min-width:34px; text-align:right; }
+.gauge input[type=range] { -webkit-appearance:none; appearance:none; width:88px; height:4px;
+  background:var(--line2); border-radius:2px; outline:none; cursor:pointer; }
+.gauge input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; appearance:none;
+  width:14px; height:14px; border-radius:50%; background:var(--accent); cursor:pointer;
+  box-shadow:0 1px 3px rgba(0,0,0,.4); }
+.gauge input[type=range]::-moz-range-thumb { width:14px; height:14px; border:0; border-radius:50%;
+  background:var(--accent); cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,.4); }
+
+/* Gomme active : le canvas prend un curseur explicite pour lever l'ambiguïté avec le tracé. */
+#c.erasing { cursor:cell; }
+#btnEraser.on { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+
+.lang { display:inline-flex; border:1px solid var(--line2); border-radius:10px; overflow:hidden; height:42px; }
+.lang button { width:48px; border:0; background:transparent; color:var(--tx-mid); font:600 12.5px var(--mono); cursor:pointer; }
+.lang button.on { background:var(--accent); color:var(--accent-ink); }
+
+.badge { display:inline-flex; align-items:center; gap:5px; font:500 11px var(--sans); padding:4px 9px; border-radius:999px;
+  border:1px solid var(--line2); color:var(--tx-mid); background:var(--bg2); white-space:nowrap; }
+.badge .dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+.badge.live { color:var(--accent); border-color:color-mix(in oklab,var(--accent) 45%,transparent);
+  background:color-mix(in oklab,var(--accent) 12%,transparent); }
+.badge.tr { color:var(--good); border-color:color-mix(in oklab,var(--good) 40%,transparent);
+  background:color-mix(in oklab,var(--good) 12%,transparent); }
+.badge.good { color:var(--good); border-color:color-mix(in oklab,var(--good) 40%,transparent); background:color-mix(in oklab,var(--good) 12%,transparent); }
+.badge.mid  { color:var(--mid);  border-color:color-mix(in oklab,var(--mid) 40%,transparent);  background:color-mix(in oklab,var(--mid) 12%,transparent); }
+.badge.bad  { color:var(--bad);  border-color:color-mix(in oklab,var(--bad) 40%,transparent);  background:color-mix(in oklab,var(--bad) 12%,transparent); }
+.badge.accent { color:var(--accent); border-color:color-mix(in oklab,var(--accent) 40%,transparent); background:color-mix(in oklab,var(--accent) 10%,transparent); }
+
+.card { background:var(--bg1); border:1px solid var(--line); border-radius:12px; }
+
+/* ---- ligne de métrique + barre qualité ---- */
+.metric { padding:9px 0; border-bottom:1px solid var(--line); }
+.metric:last-child { border-bottom:0; }
+.metric .mt { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:7px; }
+.metric .ml { font:400 12.5px var(--sans); color:var(--tx-mid); }
+.metric .mv { font-family:var(--mono); font-size:13px; font-weight:500; font-variant-numeric:tabular-nums; color:var(--tx-hi); }
+.qbar { height:4px; border-radius:2px; background:var(--bg3); overflow:hidden; }
+.qbar i { display:block; height:100%; border-radius:2px; background:var(--sc,var(--good)); transform-origin:left;
+  animation:grow .7s cubic-bezier(.2,.8,.3,1) both; }
+.q-good { --sc:var(--good); } .q-mid { --sc:var(--mid); } .q-bad { --sc:var(--bad); }
+
+/* ---- carte de feedback ---- */
+.fb { display:flex; gap:11px; padding:11px 13px; border-radius:9px; background:var(--bg2);
+  border:1px solid var(--line); border-left:3px solid var(--sc,var(--good)); }
+.fb .fbi { flex:none; width:16px; height:16px; margin-top:1px; color:var(--sc,var(--good)); }
+.fb .fbi svg { width:16px; height:16px; stroke:currentColor; stroke-width:1.8; fill:none; }
+.fb p { margin:0; font:400 12.5px/1.45 var(--sans); color:var(--tx-hi); text-wrap:pretty; }
+.fb.good { --sc:var(--good); } .fb.warn { --sc:var(--mid); } .fb.bad { --sc:var(--bad); } .fb.tip { --sc:var(--accent); }
+.fb.tip .fbi { color:var(--accent); }
+
+/* ---- score ---- */
+.score-num { font-family:var(--mono); font-weight:600; line-height:.9; font-variant-numeric:tabular-nums;
+  letter-spacing:-.03em; color:var(--sc,var(--mid)); }
+.scorebar { height:8px; border-radius:5px; background:var(--bg3); overflow:hidden; }
+.scorebar i { display:block; height:100%; border-radius:5px; background:var(--sc,var(--mid)); transform-origin:left;
+  animation:grow .8s cubic-bezier(.2,.8,.3,1) both; }
+
+@keyframes grow { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes rise { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+
+/* ============================================================================
+   En-tête global
+   ============================================================================ */
+.appbar { height:60px; flex:none; display:flex; align-items:center; gap:14px; padding:0 24px;
+  background:var(--bg1); border-bottom:1px solid var(--line); }
+.brand { display:flex; align-items:center; gap:11px; }
+.brand .logo { width:30px; height:30px; border-radius:8px; background:var(--accent);
+  display:flex; align-items:center; justify-content:center; }
+.brand .logo svg { width:16px; height:16px; stroke:var(--accent-ink); stroke-width:2; fill:none; }
+.brand span { font-weight:600; font-size:15px; }
+.sep { width:1px; height:24px; background:var(--line); }
+
+/* Onglets d'accueil : même contrôle segmenté que le reste de l'app (cf. .seg). */
+.tabs { display:inline-flex; margin-left:6px; background:var(--bg2); border:1px solid var(--line);
+  border-radius:10px; padding:3px; gap:2px; }
+.tabs button { height:34px; padding:0 15px; border:0; border-radius:7px; background:transparent;
+  color:var(--tx-mid); font:500 13px var(--sans); cursor:pointer; transition:background .12s, color .12s; }
+.tabs button:hover:not(.on) { color:var(--tx-hi); }
+.tabs button.on { background:var(--bg3); color:var(--tx-hi); font-weight:600;
+  box-shadow:0 1px 2px rgba(0,0,0,.25), inset 0 0 0 1px var(--line2); }
+.streak { display:flex; align-items:center; gap:8px; }
+.streak svg { width:16px; height:16px; stroke:var(--tx-mid); stroke-width:1.8; fill:none; }
+.streak span { font-size:12.5px; color:var(--tx-mid); }
+
+/* ============================================================================
+   ÉCRAN — Parcours (accueil)
+   ============================================================================ */
+#home { height:100%; display:flex; flex-direction:column; }
+#home .scroll { flex:1; overflow:auto; padding:40px 48px; }
+#home .inner { max-width:1000px; margin:0 auto; }
+
+.resume { display:flex; overflow:hidden; margin-bottom:44px; border-color:var(--line2); }
+.resume .body { flex:1; padding:26px 28px; }
+.resume h2 { font-size:22px; font-weight:600; margin:.4em 0 6px; letter-spacing:-.01em; }
+.resume p { margin:0 0 20px; font-size:14px; color:var(--tx-mid); line-height:1.55; max-width:440px; }
+.resume .prev { width:280px; flex:none; border-left:1px solid var(--line); position:relative;
+  background:var(--paper); overflow:hidden; }
+
+.parcours-head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:20px; }
+.parcours-head h3 { font-size:16px; font-weight:600; margin:0; }
+.parcours-head span { font:400 12px var(--sans); color:var(--tx-lo); }
+
+/* en-tête d'une des 3 parties du cursus */
+.parthead { margin:34px 0 18px; padding-top:16px; border-top:1px solid var(--line); }
+.parthead:first-of-type { margin-top:8px; border-top:0; padding-top:0; }
+.parthead h4 { margin:0; font-size:17px; font-weight:700; letter-spacing:-.01em; color:var(--accent); }
+.parthead p { margin:8px 0 0; font-size:13px; line-height:1.6; color:var(--tx-mid); max-width:660px; }
+
+.lesson { margin-bottom:16px; }
+/* une leçon « pas encore atteinte » est signalée, jamais masquée : son contenu
+   reste listé et accessible (outil d'étude perso, pas un cours verrouillé). */
+.lesson.locked .lesson-hd { opacity:.6; }
+.lesson-hd { display:flex; align-items:center; gap:14px; margin-bottom:12px; }
+.lesson-ico { width:34px; height:34px; border-radius:9px; flex:none; display:flex; align-items:center; justify-content:center;
+  font:600 14px var(--mono); }
+.lesson-ico.done { background:color-mix(in oklab,var(--good) 16%,transparent); color:var(--good); }
+.lesson-ico.cur  { background:var(--accent); color:var(--accent-ink); }
+.lesson-ico.lock { background:var(--bg3); color:var(--tx-lo); }
+.lesson-ico svg { width:17px; height:17px; stroke:currentColor; stroke-width:2.3; fill:none; }
+.lesson-hd .t { flex:1; }
+.lesson-hd .t .name { font-size:15px; font-weight:600; }
+.exlist { margin-left:16px; padding-left:26px; border-left:2px solid var(--line); display:flex; flex-direction:column; gap:8px; }
+.lesson.cur .exlist { border-left-color:var(--accent); }
+.exrow { display:flex; align-items:center; gap:14px; padding:12px 16px; }
+.exrow.dim { background:var(--bg0); }
+.exrow.next { border-color:var(--accent); }
+/* pastille « terminé » : c'est l'utilisateur qui la coche */
+.donetog { flex:none; width:20px; height:20px; padding:0; border-radius:50%; cursor:pointer;
+  border:1.5px solid var(--line2); background:transparent; display:flex; align-items:center; justify-content:center; }
+.donetog:hover { border-color:var(--good); }
+.donetog.on { background:var(--good); border-color:var(--good); }
+.donetog svg { width:12px; height:12px; stroke:var(--bg1); stroke-width:3; fill:none; }
+
+.exrow.warmup { background:color-mix(in oklab,var(--accent) 7%,transparent); border-style:dashed; }
+.exrow .chk { width:16px; height:16px; flex:none; stroke:var(--good); stroke-width:2.2; fill:none; }
+.exrow .circle { width:16px; height:16px; flex:none; border-radius:50%; border:1.5px solid var(--line2); }
+.exrow .t { flex:1; }
+.exrow .t .n { font-size:13.5px; font-weight:500; }
+.exrow .t .m { font:400 11px var(--mono); color:var(--tx-lo); margin-top:1px; }
+
+/* ============================================================================
+   ÉCRAN — Pratique
+   ============================================================================ */
+#practice, #reading { height:100%; display:flex; flex-direction:column; }
+/* La barre d'outils du canvas dépasse la largeur de l'écran dès qu'on affiche les
+   réglages de brosse : on la rend scrollable horizontalement plutôt que de laisser
+   la gomme et les actions de droite déborder hors de la fenêtre. */
+.topbar { height:58px; flex:none; display:flex; align-items:center; gap:12px; padding:0 16px;
+  background:var(--bg1); border-bottom:1px solid var(--line);
+  overflow-x:auto; overflow-y:hidden; scrollbar-width:thin; overscroll-behavior-x:contain; }
+.topbar::-webkit-scrollbar { height:5px; }
+.topbar::-webkit-scrollbar-thumb { background:var(--line2); border-radius:3px; }
+.topbar > * { flex-shrink:0; }
+.topbar > .spacer { flex:1 0 8px; }
+.topbar .title { font-size:14.5px; font-weight:600; line-height:1.2; }
+.topbar .sub { font:400 11px var(--mono); color:var(--tx-lo); }
+
+#work { flex:1; display:flex; min-height:0; position:relative; }
+
+.canvas { position:relative; flex:1; background:var(--paper); overflow:hidden; touch-action:none; }
+.canvas .grid { position:absolute; inset:0; pointer-events:none;
+  background-image:linear-gradient(var(--paper-grid) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--paper-grid) 1px,transparent 1px);
+  background-size:38px 38px; opacity:.5; }
+.canvas canvas { position:absolute; inset:0; width:100%; height:100%; touch-action:none; cursor:crosshair; }
+.chip { position:absolute; display:inline-flex; align-items:center; gap:8px; height:32px; padding:0 11px; border-radius:8px;
+  background:color-mix(in oklab,var(--bg0) 82%,transparent); border:1px solid var(--line);
+  font:500 12px var(--sans); color:var(--tx-hi); backdrop-filter:blur(6px); }
+.dots { display:inline-flex; gap:4px; }
+.dots b { width:7px; height:7px; border-radius:50%; background:var(--line2); display:block; }
+.dots b.g { background:var(--good); } .dots b.m { background:var(--mid); } .dots b.r { background:var(--bad); }
+
+.panel { width:372px; flex:none; background:var(--bg1); border-left:1px solid var(--line); display:flex; flex-direction:column; }
+.panel .pscroll { padding:18px 20px; overflow:auto; flex:1; }
+.panel .score-hd { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:12px; }
+.panel .score-hd .sub { font:400 11px var(--mono); color:var(--tx-lo); margin-top:8px; }
+
+.qualities { display:flex; flex-direction:column; gap:16px; margin:20px 0 18px; }
+.qualities .qrow .qh { display:flex; justify-content:space-between; margin-bottom:7px; }
+.qualities .qrow .qh .l { font-size:13.5px; }
+.qualities .qrow .qh .v { font-family:var(--mono); font-size:13px; font-weight:500; }
+
+.detail-toggle { width:100%; justify-content:space-between; padding:10px 12px; border:1px solid var(--line);
+  color:var(--tx-mid); font-size:12.5px; margin-bottom:20px; }
+.detail-toggle .chev { transition:transform .2s; }
+.detail-toggle[aria-expanded="true"] .chev { transform:rotate(180deg); }
+#detail { margin-bottom:20px; }
+#detail[hidden] { display:none; }
+
+.empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+  padding:24px; }
+.empty svg { width:26px; height:26px; stroke:var(--tx-lo); stroke-width:1.6; fill:none; margin-bottom:12px; }
+.empty .t { font-size:14px; font-weight:600; margin-bottom:6px; }
+.empty .d { font-size:12px; color:var(--tx-mid); line-height:1.5; max-width:220px; }
+
+.panel .foot { margin-top:auto; padding:14px 20px; border-top:1px solid var(--line); background:var(--bg0);
+  display:flex; align-items:center; justify-content:space-between; }
+
+#todo { flex:1; padding:40px; overflow:auto; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; }
+#todo .box { max-width:420px; }
+
+/* tiroir consigne (pratique) */
+.consigne-wrap { position:absolute; inset:0 auto 0 0; width:min(560px,92%); background:var(--bg1);
+  border-right:1px solid var(--line); transform:translateX(-100%); transition:transform .22s ease; z-index:5;
+  display:flex; flex-direction:column; }
+#practice.consigne-open .consigne-wrap { transform:translateX(0); box-shadow:12px 0 40px rgba(0,0,0,.35); }
+.consigne-head { display:flex; justify-content:space-between; align-items:center; padding:12px 16px;
+  border-bottom:1px solid var(--line); font-weight:600; }
+
+/* ---- mini-lecteur vidéo flottant (au-dessus du canvas) ---- */
+/* Largeur mini imposée : sous ~480px (iframe ~224px de haut) le lecteur YouTube
+   refuse la lecture inline et redirige vers youtube.com au clic sur play.
+   Vérifié : 398x224 -> redirige, 478x269 -> lit. Ne pas descendre sous min-width. */
+.vpanel { position:fixed; right:16px; bottom:16px; width:560px; min-width:280px;
+  max-width:calc(100vw - 32px); z-index:40;
+  background:var(--bg1); border:1px solid var(--line2); border-radius:12px; overflow:hidden;
+  box-shadow:0 18px 50px -12px rgba(0,0,0,.55); display:flex; flex-direction:column; }
+.vhead { display:flex; align-items:center; gap:8px; padding:7px 8px 7px 6px; background:var(--bg2);
+  border-bottom:1px solid var(--line); cursor:grab; touch-action:none; }
+.vhead:active { cursor:grabbing; }
+.vgrip { flex:none; width:16px; height:16px; color:var(--tx-lo); }
+.vgrip svg { width:16px; height:16px; fill:currentColor; }
+.vtitle { flex:1; min-width:0; font:500 12px var(--sans); color:var(--tx-hi);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.vnav { display:inline-flex; align-items:center; gap:2px; flex:none; }
+.vcount { font-size:11px; color:var(--tx-lo); min-width:26px; text-align:center; }
+.vbtn { flex:none; width:26px; height:26px; border:0; border-radius:6px; background:transparent;
+  color:var(--tx-mid); cursor:pointer; font-size:13px; line-height:1; display:inline-flex;
+  align-items:center; justify-content:center; }
+.vbtn:hover:not(:disabled) { background:var(--bg3); color:var(--tx-hi); }
+.vbtn:disabled { opacity:.35; cursor:not-allowed; }
+.vbtn svg { width:15px; height:15px; stroke:currentColor; stroke-width:1.8; fill:none; }
+.vbody { aspect-ratio:16/9; background:#000; }
+.vbody iframe { width:100%; height:100%; border:0; display:block; }
+/* Poignée de redimensionnement : on ne pilote que la largeur, la hauteur suit
+   l'aspect-ratio de .vbody (cf. VideoPanel._resize). z-index explicite pour rester
+   saisissable au-dessus de l'iframe YouTube. */
+.vresize { position:absolute; right:0; bottom:0; width:26px; height:26px; cursor:ew-resize;
+  touch-action:none; z-index:2; background:linear-gradient(315deg,var(--bg2) 55%,transparent 55%);
+  border-radius:0 0 12px 0; }
+.vresize::before { content:''; position:absolute; right:5px; bottom:5px; width:9px; height:9px;
+  border-right:2px solid var(--tx-mid); border-bottom:2px solid var(--tx-mid); border-radius:0 0 2px 0; }
+.vresize:hover::before { border-color:var(--accent); }
+
+/* Bouton « Dupliquer » : libellé visible, pour qu'il ne soit pas confondu avec un PiP. */
+.vbtn.wide { width:auto; gap:5px; padding:0 9px; font:500 11.5px var(--sans); }
+
+/* ============================================================================
+   ÉCRAN — Lecture (leçon)
+   ============================================================================ */
+#reading .banner { flex:none; display:flex; align-items:center; gap:9px; padding:10px 24px;
+  background:color-mix(in oklab,var(--mid) 13%,var(--bg1)); border-bottom:1px solid var(--line);
+  font-size:12.5px; color:var(--tx-mid); }
+#reading .banner svg { width:15px; height:15px; stroke:var(--mid); stroke-width:1.8; fill:none; }
+#reading .rbody { flex:1; display:flex; min-height:0; }
+#reading .scroll { flex:1; overflow:auto; padding:44px 24px 80px; }
+
+/* sommaire des pages d'une leçon */
+.rtoc { flex:0 0 268px; overflow-y:auto; background:var(--bg1); border-right:1px solid var(--line);
+  padding:16px 12px; }
+.rtoc[hidden] { display:none; }
+.rtoc .toch { font:600 10.5px var(--mono); letter-spacing:.14em; text-transform:uppercase;
+  color:var(--tx-lo); padding:0 10px; margin-bottom:10px; }
+.rtoc button { display:flex; gap:10px; align-items:baseline; width:100%; text-align:left; border:0;
+  background:transparent; color:var(--tx-mid); border-radius:8px; padding:9px 10px; cursor:pointer;
+  font:400 13px var(--sans); line-height:1.35; }
+.rtoc button:hover { background:var(--bg3); color:var(--tx-hi); }
+.rtoc button.on { background:color-mix(in oklab,var(--accent) 12%,transparent); color:var(--accent); font-weight:600; }
+.rtoc button .num { flex:none; font:500 11px var(--mono); color:var(--tx-lo); min-width:16px; }
+.rtoc button.on .num { color:var(--accent); }
+.rtoc button.read .num { color:var(--good); }   /* page déjà lue */
+
+/* lecteur de démo inséré dans une page de leçon */
+.lvideo { margin:0 0 28px; }
+.lvideo iframe { width:100%; aspect-ratio:16/9; border:0; border-radius:10px; display:block; background:#000; }
+.lvideo figcaption { margin-top:8px; font:400 12px var(--mono); color:var(--tx-lo); }
+
+/* précédent / suivant en bas de page */
+.rnav { max-width:760px; margin:40px auto 0; display:flex; gap:12px; align-items:center;
+  border-top:1px solid var(--line); padding-top:20px; }
+.rnav .spacer { flex:1; }
+.rnav .pos { font:500 12px var(--mono); color:var(--tx-lo); }
+.article { max-width:760px; margin:0 auto; user-select:text; }
+.article h1 { font-size:34px; font-weight:700; letter-spacing:-.02em; line-height:1.15; margin:.2em 0 16px; }
+.article h2 { font-size:21px; font-weight:600; margin:1.4em 0 .5em; }
+.article h3 { font-size:17px; font-weight:600; margin:1.2em 0 .4em; }
+.article h4 { font-size:15px; font-weight:600; margin:1em 0 .3em; }
+.article p { font-size:16px; line-height:1.75; color:var(--tx-hi); margin:0 0 18px; }
+.article img { max-width:100%; height:auto; border-radius:9px; margin:14px 0; display:block; border:1px solid var(--line); }
+.article blockquote { margin:26px 0; padding:4px 0 4px 20px; border-left:3px solid var(--accent);
+  font-size:18px; font-weight:500; line-height:1.5; color:var(--tx-hi); }
+.article ul { margin:0 0 22px; padding-left:22px; font-size:16px; line-height:1.9; }
+.article a { color:var(--accent); }
+.article hr { border:0; border-top:1px solid var(--line); margin:34px 0; }
+
+/* ============================================================================
+   Sélection simple (grilles) — utilisée dans le Parcours pour les exercices libres
+   ============================================================================ */
+.sechead { display:flex; align-items:baseline; gap:10px; margin:30px 0 14px; }
+.sechead h3 { font-size:15px; font-weight:600; margin:0; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; }
+.excard { padding:16px; text-align:left; cursor:pointer; display:flex; flex-direction:column; gap:4px;
+  border-left:3px solid var(--line2); min-height:120px; }
+.excard.playable { border-left-color:var(--accent); }
+.excard:hover { border-color:var(--accent); transform:translateY(-1px); }
+.excard .top { margin-bottom:34px; display:flex; gap:6px; flex-wrap:wrap; }
+.excard .n { font-size:14px; font-weight:600; }
+.excard .m { font:400 11px var(--mono); color:var(--tx-lo); }
+.excard .bot { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+
+.err { color:var(--bad); background:var(--bg1); border:1px solid var(--line); padding:18px; border-radius:12px;
+  max-width:560px; margin:40px auto; }
+
+/* ============================================================================
+   Gestionnaire PiP avancé (photos + vidéos + duplication)
+   ============================================================================ */
+.pip-control { position:absolute; top:16px; right:16px; display:flex; gap:8px; z-index:30;
+  background:color-mix(in oklab,var(--bg0) 82%,transparent); backdrop-filter:blur(6px);
+  border:1px solid var(--line); border-radius:8px; padding:6px; }
+.pip-btn { flex:none; width:36px; height:36px; padding:0; border:0; background:transparent;
+  border-radius:6px; cursor:pointer; color:var(--tx-mid); display:flex; align-items:center;
+  justify-content:center; transition:background .15s, color .15s; }
+.pip-btn:hover { background:var(--bg2); color:var(--tx-hi); }
+.pip-btn svg { width:16px; height:16px; stroke:currentColor; stroke-width:1.6; fill:none; }
+
+.pip-container { position:absolute; inset:0; pointer-events:none; }
+.pip-container .pip-window { pointer-events:auto; }
+
+.pip-window { position:fixed; width:380px; height:280px; background:var(--bg1);
+  border:1px solid var(--line2); border-radius:10px; overflow:hidden;
+  box-shadow:0 18px 50px -12px rgba(0,0,0,.55); display:flex; flex-direction:column;
+  right:16px; bottom:16px; z-index:35; touch-action:none; }
+
+.pip-header { display:flex; align-items:center; gap:8px; padding:8px 10px;
+  background:var(--bg2); border-bottom:1px solid var(--line); cursor:grab;
+  user-select:none; flex:none; }
+.pip-header:active { cursor:grabbing; }
+.pip-title { flex:1; min-width:0; font:500 12px var(--sans); color:var(--tx-hi);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+.pip-actions { display:inline-flex; gap:4px; flex:none; }
+.pip-dup, .pip-close { width:24px; height:24px; border:0; border-radius:5px;
+  background:transparent; color:var(--tx-mid); cursor:pointer; font-size:12px;
+  display:flex; align-items:center; justify-content:center; transition:background .15s; }
+.pip-dup:hover, .pip-close:hover { background:var(--bg3); color:var(--tx-hi); }
+
+.pip-body { flex:1; overflow:hidden; background:#000; position:relative; }
+.pip-body img { width:100%; height:100%; object-fit:contain; }
+.pip-body iframe { width:100%; height:100%; border:0; display:block; }
+
+.pip-resize { position:absolute; bottom:0; right:0; width:16px; height:16px;
+  cursor:nwse-resize; touch-action:none; background:linear-gradient(135deg,transparent 50%,var(--line) 50%); }

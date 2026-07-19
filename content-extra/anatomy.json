@@ -1,0 +1,25 @@
+{
+  "note": "Anatomie humaine — hors cursus Drawabox (qui n'enseigne pas la figure). Série « Anatomy Quick Tips » de Sinix Design (chaîne YouTube externe). Contenu tiers, lecture via l'embed YouTube officiel. Ordre pédagogique tête -> membres -> surfaces.",
+  "title": "Anatomie humaine",
+  "author": "Sinix Design",
+  "intro": "Complément d'anatomie humaine avec la série « Anatomy Quick Tips » de Sinix Design (chaîne externe, hors Drawabox). Chaque vidéo se détache en Picture-in-Picture pour dessiner en la suivant.",
+  "playlist": "https://www.youtube.com/playlist?list=PLvgkByLCrC6yoyJ8HM1We1a5awk2MYjIc",
+  "topics": [
+    { "key": "skulls",    "title": "Crânes",      "id": "MWwYjyIKrA8", "duration": "20:02" },
+    { "key": "eyes",      "title": "Yeux",        "id": "LIykey9umVk", "duration": "25:29" },
+    { "key": "noses",     "title": "Nez",         "id": "_HDyk4dy7kc", "duration": "11:41" },
+    { "key": "mouths",    "title": "Bouches",     "id": "EdLBGJ4wjFA", "duration": "15:01" },
+    { "key": "ears",      "title": "Oreilles",    "id": "IVbqoy_JEV0", "duration": "6:22" },
+    { "key": "hair",      "title": "Cheveux",     "id": "88khFjZwkl0", "duration": "20:53" },
+    { "key": "skin",      "title": "Peau",        "id": "V_E1ARR_AAg", "duration": "20:44" },
+    { "key": "necks",     "title": "Cous",        "id": "UN90_Dt4Ix0", "duration": "13:48" },
+    { "key": "shoulders", "title": "Épaules",     "id": "CGBvbYEtwH8", "duration": "13:58" },
+    { "key": "backs",     "title": "Dos",         "id": "RBSXYdfrZ2c", "duration": "14:01" },
+    { "key": "abs",       "title": "Abdominaux",  "id": "xCfkX-cVIG4", "duration": "" },
+    { "key": "hips",      "title": "Hanches",     "id": "FiASsVGyG4Y", "duration": "22:18" },
+    { "key": "arms",      "title": "Bras",        "id": "z3fG6F_pi6M", "duration": "28:19" },
+    { "key": "hands",     "title": "Mains",       "id": "hzl3eaxAJpo", "duration": "13:44" },
+    { "key": "knees",     "title": "Genoux",      "id": "FN94kc7VHns", "duration": "9:10" },
+    { "key": "feet",      "title": "Pieds",       "id": "05fn1DlFRtY", "duration": "10:44" }
+  ]
+}

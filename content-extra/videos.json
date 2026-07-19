@@ -1,0 +1,266 @@
+{
+  "note": "Vidéos officielles Drawabox (chaîne Uncomfortable). Mapping exercice/leçon -> vidéo YouTube. Fichier ajouté hors drawabox.json (données figées). Lecture via l'embed YouTube officiel.",
+  "playlist": "PLA7yj0dxiUGv7k8ohEt15EtMz9PTckNXw",
+  "playlistIdsNote": "Les vidéos RÉELLEMENT dans la playlist. Le paramètre list= ne doit être ajouté QUE pour celles-ci : pour une vidéo hors playlist, YouTube ignore la vidéo demandée et joue la playlist depuis le début (on obtenait « What is Drawabox? » partout).",
+  "playlistIds": [
+    "9708PBUvCQ0",
+    "GEAFLXM34L4",
+    "8ocmPR_EprE",
+    "mgl6Ll3K3gw",
+    "nBjTGvpd-q8",
+    "Egxv9dycg5Q",
+    "0_AdsK8x9Lw",
+    "_IR8zH4RCfU",
+    "x5Pes5fy-Eo",
+    "dzGmoJanhbQ",
+    "LkJG6pKTuRc",
+    "o1HAVipdsZM",
+    "JsG7cMasVjo",
+    "tHJ3rzk6kno",
+    "7WLmXufShyA",
+    "gyRHkTPqfrQ",
+    "9EUc-nni1_w",
+    "CKgeIA2PqY8",
+    "xiMEIg2fU-g",
+    "HMbBMQMICmk",
+    "XhDWiPARouY",
+    "tH6kpY6lYUw",
+    "N3Tm0UDDHgs",
+    "mrn8Z6IqRnw",
+    "hbjFN6RN1jA",
+    "Oz98L4Fyxoo",
+    "gSbFHHrQK7w",
+    "treOc3Pp-aE",
+    "OCIBJSxS9fY",
+    "evGWbjDI6xQ",
+    "ltbHkgPiQZo",
+    "86g7QL7gOWg",
+    "KFEFN139TdY",
+    "DxEK_zjXbcE",
+    "zr3S8eGLSiw",
+    "B_iaMu-crZk",
+    "y5By0Q_XFBM"
+  ],
+  "byExercise": {
+    "superimposedlines": [
+      "dzGmoJanhbQ"
+    ],
+    "ghostedlines": [
+      "LkJG6pKTuRc",
+      "o1HAVipdsZM"
+    ],
+    "ghostedplanes": [
+      "JsG7cMasVjo"
+    ],
+    "tablesofellipses": [
+      "7WLmXufShyA",
+      "gyRHkTPqfrQ"
+    ],
+    "ellipsesinplanes": [
+      "9EUc-nni1_w",
+      "CKgeIA2PqY8"
+    ],
+    "funnels": [
+      "xiMEIg2fU-g",
+      "HMbBMQMICmk"
+    ],
+    "plottedperspective": [
+      "mrn8Z6IqRnw"
+    ],
+    "roughperspective": [
+      "hbjFN6RN1jA"
+    ],
+    "rotatedboxes": [
+      "Oz98L4Fyxoo"
+    ],
+    "organicperspective": [
+      "OCIBJSxS9fY"
+    ],
+    "organicarrows": [
+      "B_iaMu-crZk"
+    ],
+    "contourlines": [
+      "y5By0Q_XFBM"
+    ],
+    "textureanalysis": [
+      "w7vfYsrL768",
+      "LtVyDMnvoOg"
+    ],
+    "dissections": [
+      "2kv1-uNGsh8",
+      "fVWyNnUjlhY"
+    ],
+    "formintersections": [
+      "VuorfzSk33Y",
+      "svRBpo13DXc"
+    ],
+    "organicintersections": [
+      "QgcmB26CHLY",
+      "TLUVJzoEOOE"
+    ]
+  },
+  "byLesson": {
+    "0": [
+      "9708PBUvCQ0"
+    ],
+    "1": [
+      "0_AdsK8x9Lw"
+    ],
+    "2": [
+      "DxEK_zjXbcE"
+    ],
+    "250boxes": [
+      "ltbHkgPiQZo"
+    ]
+  },
+  "thumbnailsNote": "Vignette (nom de fichier image) -> vidéo YouTube. Le site rend ses démos en <a href='youtu.be/ID'><img src='vignette'></a> ; le scrape a gardé l'image et jeté le lien, d'où des vignettes mortes avec un faux bouton play. Ce mapping permet de remplacer chaque vignette par son vrai lecteur, À SA PLACE dans le texte. Extrait des 60 pages du site (48 vignettes sur 38 pages).",
+  "thumbnails": {
+    "1ef1e973.jpg": "9708PBUvCQ0",
+    "454f9633.jpg": "GEAFLXM34L4",
+    "a01466b5.jpg": "8ocmPR_EprE",
+    "8138bccc.jpg": "nBjTGvpd-q8",
+    "08b063fa.jpg": "Egxv9dycg5Q",
+    "ddab04bc.jpg": "0_AdsK8x9Lw",
+    "20c84af2.jpg": "_IR8zH4RCfU",
+    "23577a11.jpg": "x5Pes5fy-Eo",
+    "3e6b8f5b.jpg": "tHJ3rzk6kno",
+    "3bb5dc69.jpg": "XhDWiPARouY",
+    "4b75d0a1.jpg": "tH6kpY6lYUw",
+    "a796830d.jpg": "N3Tm0UDDHgs",
+    "5cc1829a.png": "5cciOw9z6IU",
+    "08adda9f.jpg": "DxEK_zjXbcE",
+    "1df5c2ab.jpg": "zr3S8eGLSiw",
+    "c6f6b026.1_ObservationAndMemory": "QW-YPV3SDn0",
+    "2c76a04b.2_FormShading": "ri01PNdEBxQ",
+    "7f105460.3_CastShadows": "SLZdcMTXWjc",
+    "30a38d03.4_ImplicitVSExplicit": "sueXWvNZ0ss",
+    "1ec86ac7.jpg": "1RYSrcv8Rc8",
+    "40864b25.jpg": "hrjD6l-P1IM",
+    "3dbf7144.jpg": "B42OHBTIIAY",
+    "46835dab.jpg": "pio-yyLw1po",
+    "deed93c2.jpg": "4gOOLNlSmZE",
+    "9f4eb032.jpg": "xc3ePYMcE9E",
+    "42a311e5.jpg": "oujl62B3QRI",
+    "48811bea.jpg": "m1pH_BR4zJk",
+    "d5226091.jpg": "B_g4D2_lyL0",
+    "aae4e228.jpg": "_y7yKC40Kto",
+    "362113fd.jpg": "oX7WET9Ewtk",
+    "74a560c0.jpg": "JzLL-6BPAyE",
+    "486a8d19.jpg": "B2y-GKKT9sM",
+    "5f35efb2.jpg": "rMvT04OKBMQ",
+    "e81f2015.jpg": "Fbbatul7GRY",
+    "29ce7161.jpg": "TN8ZxKA-6jw",
+    "4daa99cd.jpg": "aoHcRh85DBA",
+    "3155dbfb.jpg": "ct1Wm5U50VE",
+    "aa7b0533.jpg": "Ix_TE1U7HBs",
+    "13cb943f.jpg": "yFjrSddZiv4",
+    "d853ace1.jpg": "ERQ-_Xfz3yk",
+    "f38870a7.jpg": "s7feUxUoRyY",
+    "8e03e270.jpg": "ZB7hBxbm6RA",
+    "699d7dd7.jpg": "7XLBGwU5KUk",
+    "8d44a6cc.jpg": "ltbHkgPiQZo",
+    "8d8fa4f3.jpg": "86g7QL7gOWg",
+    "034d7e6c.jpg": "KFEFN139TdY",
+    "cacd2785.jpg": "w7vfYsrL768",
+    "a8544fb2.jpg": "aHVcP9mArpo",
+    "9169b903.jpg": "Up4ESVWwmPw",
+    "d2052237.jpg": "CTJfEf0WkMs",
+    "93357617.jpg": "O90GTy8Jib8",
+    "f52f8d7b.jpg": "E6D4uhb78ns",
+    "752b6d9f.jpg": "NZJFz-MSphk",
+    "d1a010c8.jpg": "zUVcyJi0YDg",
+    "89ce74e6.jpg": "rYc0UiGTAnY",
+    "00bb7b13.jpg": "nbZr6xv2G3c",
+    "3fe830bc.jpg": "0B32QUO7xs0",
+    "5e64e29d.jpg": "RBwHU72-Abk",
+    "50d163a9.jpg": "QEZJyF1Tlfs"
+  },
+  "titles": {
+    "9708PBUvCQ0": "Lesson 0, Part 1: What is Drawabox?",
+    "GEAFLXM34L4": "Lesson 0, Part 2: What are the FUNDAMENTALS?",
+    "8ocmPR_EprE": "Lesson 0, Part 3: Changing your Mindset and the 50% Rule",
+    "mgl6Ll3K3gw": "Overcoming the Fear of a Blank Page",
+    "nBjTGvpd-q8": "Lesson 0, Part 4: Getting the Most out of Drawabox",
+    "Egxv9dycg5Q": "Lesson 0, Part 5: The Tools We Recommend",
+    "0_AdsK8x9Lw": "Lesson 1: Drawing From Your Wrist and Shoulder",
+    "_IR8zH4RCfU": "Lesson 1: Holding your Pen",
+    "x5Pes5fy-Eo": "Lesson 1: The Principles of Markmaking",
+    "dzGmoJanhbQ": "Lesson 1, Exercise 1: Superimposed Lines",
+    "LkJG6pKTuRc": "Lesson 1, Exercise 2: Ghosted Lines",
+    "o1HAVipdsZM": "Lesson 1: The Levels of the Ghosting Method",
+    "JsG7cMasVjo": "Lesson 1, Exercise 3: Ghosted Planes",
+    "tHJ3rzk6kno": "Lesson 1: Ellipses",
+    "7WLmXufShyA": "Lesson 1, Exercise 4: Tables of Ellipses",
+    "gyRHkTPqfrQ": "Lesson 1, Exercise 4: Things to Remember (Tables of Ellipses)",
+    "9EUc-nni1_w": "Lesson 1, Exercise 5: Ellipses in Planes",
+    "CKgeIA2PqY8": "Lesson 1, Exercise 5: Things to Remember (Ellipses in Planes)",
+    "xiMEIg2fU-g": "Lesson 1, Exercise 6: Funnels",
+    "HMbBMQMICmk": "Lesson 1, Exercise 6: Things to Remember (Funnels)",
+    "XhDWiPARouY": "Lesson 1, Part 3: Boxes and the Absolute Basics of Perspective Projection",
+    "tH6kpY6lYUw": "Lesson 1, Part 3: Foreshortening and Vanishing Points",
+    "N3Tm0UDDHgs": "Lesson 1, Part 3: Rotating Forms, Perspective Grids, and the Concept of Infinity",
+    "mrn8Z6IqRnw": "Lesson 1, Exercise 7: Plotted Perspective",
+    "hbjFN6RN1jA": "Lesson 1, Exercise 8: Rough Perspective",
+    "Oz98L4Fyxoo": "Lesson 1, Exercise 9: Rotated Boxes",
+    "gSbFHHrQK7w": "Lesson 1: Estimating Rotation",
+    "treOc3Pp-aE": "Lesson 1: Line Weight and Overlaps",
+    "OCIBJSxS9fY": "Lesson 1, Exercise 10: Organic Perspective",
+    "evGWbjDI6xQ": "Lesson 1, Boxes: The Y Method",
+    "ltbHkgPiQZo": "The 250 Box Challenge",
+    "86g7QL7gOWg": "250 Box Challenge: The First Fifty",
+    "KFEFN139TdY": "250 Box Challenge: The Next Fifty",
+    "DxEK_zjXbcE": "Lesson 2: Introduction",
+    "zr3S8eGLSiw": "Lesson 2: Thinking in 3D",
+    "B_iaMu-crZk": "Lesson 2: Organic Arrows",
+    "y5By0Q_XFBM": "Lesson 2: Sausages with Contour Lines",
+    "w7vfYsrL768": "Lesson 2, Exercise 3: Texture Analysis",
+    "LtVyDMnvoOg": "Lesson 2, Part 5: Texture Analysis",
+    "2kv1-uNGsh8": "Lesson 2, Exercise 4: Dissections",
+    "fVWyNnUjlhY": "Lesson 2, Part 8: Dissections",
+    "VuorfzSk33Y": "Lesson 2, Exercise 5: Form Intersections",
+    "svRBpo13DXc": "Lesson 2, Part 11: Form Intersections",
+    "QgcmB26CHLY": "Lesson 2, Exercise 6: Organic Intersections",
+    "TLUVJzoEOOE": "Lesson 2, Part 13: Organic Intersections",
+    "CTJfEf0WkMs": "Lesson 3: Drawing a Daisy",
+    "O90GTy8Jib8": "Lesson 3: Drawing a Mushroom",
+    "E6D4uhb78ns": "Lesson 4: Drawing a Wasp",
+    "NZJFz-MSphk": "Lesson 4: Drawing a Louse",
+    "zUVcyJi0YDg": "Lesson 5: Drawing a Wolf",
+    "rYc0UiGTAnY": "Lesson 5: Drawing a Tiger's Head",
+    "nbZr6xv2G3c": "Lesson 6: Drawing a Bluetooth Speaker",
+    "0B32QUO7xs0": "Lesson 7: Drawing a 1967 Shelby Mustang GT500 Fastback",
+    "RBwHU72-Abk": "How to Draw a Cylinder 2",
+    "QEZJyF1Tlfs": "How to Draw a Wheel",
+    "Up4ESVWwmPw": "Lesson 2, Part 3: Construction",
+    "7XLBGwU5KUk": "Lesson 7: 1967 Chevy Camaro Demo",
+    "5cciOw9z6IU": "Lesson 1: Uncomfortable Critiques my Homework!",
+    "B2y-GKKT9sM": "Lesson 5, Drawing Animals: Constructing an Otter",
+    "Fbbatul7GRY": "Lesson 5: American White Pelican Demo",
+    "4gOOLNlSmZE": "Lesson 3, Drawing Plants: Drawing a Cactus",
+    "1RYSrcv8Rc8": "Lesson 3: An Introduction to Drawing Plants",
+    "B42OHBTIIAY": "Lesson 3, Drawing Plants: The Branches Exercise",
+    "B_g4D2_lyL0": "Lesson 4, Drawing Insects and Arachnids: Drawing A Scorpion",
+    "ERQ-_Xfz3yk": "Measuring in Perspective: Constructing to Scale",
+    "Ix_TE1U7HBs": "Lesson 7: An Introduction to Drawing Vehicles",
+    "m1pH_BR4zJk": "Lesson 4: An Introduction to Drawing Insects and Arachnids",
+    "TN8ZxKA-6jw": "Lesson 6: An Introduction to Drawing Everyday Objects",
+    "QW-YPV3SDn0": "Lesson 2: Observation and Memory",
+    "oX7WET9Ewtk": "Lesson 4: Common House Fly Demo",
+    "pio-yyLw1po": "Lesson 3, Drawing Plants: Drawing a Hibiscus Flower",
+    "aHVcP9mArpo": "100 Treasure Chest Challenge",
+    "aoHcRh85DBA": "Lesson 6: Wooden Barrel Demo",
+    "JzLL-6BPAyE": "Lesson 5: An Introduction to Drawing Animals",
+    "ZB7hBxbm6RA": "Lesson 7: Coast Guard Boat Demo",
+    "hrjD6l-P1IM": "Lesson 3, Drawing Plants: The Leaves Exercise",
+    "xc3ePYMcE9E": "Lesson 3: Pitcher Plant Demo",
+    "oujl62B3QRI": "Lesson 3: Potato Plant Demo",
+    "ct1Wm5U50VE": "Lesson 6: Computer Mouse Demo",
+    "rMvT04OKBMQ": "Lesson 5, Drawing Animals: Drawing Animal Heads",
+    "sueXWvNZ0ss": "Lesson 2: Implicit vs Explicit",
+    "_y7yKC40Kto": "Lesson 4: Black Widow Spider Demo",
+    "s7feUxUoRyY": "Lesson 7: Cab-Over Truck Demo",
+    "SLZdcMTXWjc": "Lesson 2: Cast Shadows",
+    "yFjrSddZiv4": "Perfect Circles and Cubes in 3D Space",
+    "ri01PNdEBxQ": "Lesson 2: Form Shading"
+  }
+}
