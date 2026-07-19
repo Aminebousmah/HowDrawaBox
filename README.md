@@ -1,74 +1,121 @@
-# HowDrawaBox
+# ✏️ HowDrawaBox
 
-**Entraîneur de dessin avec analyse de tracé en temps réel**, basé sur le cursus [Drawabox](https://drawabox.com).
+> **Apprendre à dessiner avec un correcteur qui regarde ton geste, pas ton dessin.**
+> Chaque point du trait est capturé — position, pression, inclinaison du stylet, horodatage —
+> et évalué géométriquement pendant que tu traces. Basé sur le cursus [Drawabox](https://drawabox.com).
 
-Tu dessines à la tablette graphique, l'app analyse le trait *pendant* que tu le traces et te dit ce qui ne va pas : le trait ondule, il s'arque, tu as hésité au départ, tes arêtes ne convergent pas vers le point de fuite.
+![Vanilla JS](https://img.shields.io/badge/Vanilla_JS-ES_modules-F7DF1E?logo=javascript&logoColor=black)
+![Dependencies](https://img.shields.io/badge/dépendances-0-brightgreen)
+![Pointer Events](https://img.shields.io/badge/Pointer_Events-pression_%2B_tilt-4285F4)
+![Tests](https://img.shields.io/badge/tests-45_sur_tracés_synthétiques-brightgreen)
+![License](https://img.shields.io/badge/licence-MIT_(code)-blue)
 
 ---
 
-## Le principe
+## Le problème
 
-La plupart des outils de dessin ne voient que l'image finale. HowDrawaBox travaille sur **les données brutes du trait**.
+Drawabox ne juge pas la ressemblance d'un dessin, il juge **la qualité du geste** : un trait
+doit être tracé d'un mouvement franc, depuis l'épaule, sans s'arrêter pour corriger.
 
-Chaque point est capturé via la *Pointer Events API* — position, **pression**, **inclinaison du stylet**, **horodatage** — puis le trait est évalué géométriquement selon les principes Drawabox :
+Or deux traits peuvent être **visuellement identiques** et pédagogiquement opposés :
 
-```js
-points[] = { x, y, pressure, tiltX, tiltY, t }
-   ↓
-validateur → { score, metrics{}, feedback[] }
+```
+Trait A  ▸ 180 ms, vitesse régulière, une seule passe        → geste confiant
+Trait B  ▸ 2,4 s, trois ralentissements, un aller-retour     → geste hésitant
 ```
 
-C'est ce qui permet de distinguer un trait *confiant* d'un trait *hésitant* — deux tracés qui peuvent être visuellement identiques mais dont la signature temporelle diffère du tout au tout. Un trait lent et corrigé est sanctionné même s'il est parfaitement droit.
+Une fois le dessin rendu en PNG, cette différence **a disparu**. C'est pour ça qu'un
+correcteur qui analyse l'image finale ne peut structurellement pas enseigner Drawabox.
 
-> **Décision d'architecture :** canvas web custom plutôt que GIMP/Krita. Ces derniers ne fournissent que l'image rendue, jamais la dynamique du geste.
+**Conséquence : le cœur du projet est la capture stroke-level**, pas le rendu.
 
----
+> **Décision d'architecture :** canvas web custom plutôt que GIMP/Krita. Ces derniers
+> n'exposent que l'image rendue, jamais la dynamique du geste.
 
-## Ce que l'app sait faire
+## Comment ça marche
 
-### Analyse live
+```mermaid
+flowchart TD
+    A["Tablette graphique<br/>stylet"] --> B["Pointer Events API<br/>pointerdown · move · up"]
+    B --> C["points[]<br/>x · y · pressure · tilt · t"]
+    C --> D{"Validateur<br/>(un par exercice)"}
+    T["Cible générée<br/>guide · points · plan · entonnoir"] -.référence.-> D
+    D --> E["score · metrics · feedback"]
+    E --> F["Panneau live<br/>3 qualités + métriques brutes"]
+    C --> G["Rendu brosse<br/>grain déterministe"]
 
-| Exercice | Ce qui est mesuré |
+    style C fill:#2563eb,color:#fff
+    style D fill:#7c3aed,color:#fff
+    style E fill:#059669,color:#fff
+```
+
+Le contrat de validation est le format pivot. Il est **agnostique de l'UI** : chaque
+validateur est un module isolé, testable sans navigateur.
+
+```js
+// entrée : les points bruts du trait + la cible générée pour l'exercice
+points[] = { x, y, pressure, tiltX, tiltY, t }
+
+// sortie
+{ score: 0..1, metrics: { …mesures brutes… }, feedback: [{ t, m }] }
+```
+
+## Ce que les validateurs mesurent
+
+Sept modules d'analyse couvrent les 16 exercices du cursus :
+
+| Module | Exercices | Mesures |
+|---|---|---|
+| `superimposed-lines` | Lignes superposées | Droiture (écart à la régression), *fraying* aux deux bouts, superposition des passages |
+| `ghosted-lines` | Lignes fantômées | Erreur départ/arrivée sur la cible, arc, overshoot, wobble |
+| `ghosted-planes` | Plans fantômés | Adhérence au guide, bord le plus raté |
+| `ellipses-in-planes` | Ellipses en plans, tables d'ellipses | Régularité (écart au fit par moindres carrés), nombre de tours, écart aux 4 bords, degré |
+| `funnels` | Entonnoirs | Alignement sur l'axe mineur, inscription dans les bornes |
+| `markmaking` | Perspectives, boîtes, arêtes | Convergence vers le point de fuite, droiture, fluidité de l'arc |
+| `ellipse-geometry` | — | Primitive partagée : fit d'ellipse, degré, fermeture |
+
+Trois **signaux transverses** s'ajoutent à toutes les analyses, et ce sont eux qui
+distinguent le trait A du trait B ci-dessus : `Vitesse`, `Stalls` (ralentissements),
+`Reversals` (aller-retours).
+
+Chaque trait ressort avec un score sur 100, trois qualités synthétiques, le détail des
+métriques brutes repliable, et un feedback qui **nomme la faute** plutôt que de donner une note.
+
+## Ce qui tourne aujourd'hui
+
+- ✅ **16 exercices analysés en direct** — chacun avec sa cible générée et ses critères
+- ✅ **45 tests** sur tracés synthétiques, 7 suites — chaque règle couverte par un tracé « bon » **et** un « mauvais »
+- ✅ **5 brosses réellement distinctes** — plume (largeur suivant la pression), feutre, crayon, craie, aquarelle
+- ✅ **Réglages figés par trait** — changer de brosse ne repeint jamais ce qui est déjà sur la page
+- ✅ **Grain déterministe** — un PRNG semé rend chaque trait à l'identique à chaque frame, sinon il scintillerait au redraw
+- ✅ **Gomme au trait entier**, taille (0.5→16) et opacité en jauges continues
+- ✅ **Références flottantes** — photos et vidéos YouTube déplaçables, redimensionnables et **duplicables** (une vue figée sur une pose, l'autre qui tourne)
+- ✅ **Progression persistée** — moyennes par exercice, verrouillage progressif des leçons
+- ✅ **Bilingue FR / EN** avec repli automatique sur l'anglais
+
+<!-- Captures d'écran : déposer les PNG dans docs/screenshots/ puis référencer ici -->
+
+## Les cinq espaces
+
+| | |
 |---|---|
-| **Lignes superposées** | Droiture (écart à la régression linéaire), *fraying* aux extrémités, absence de wobble |
-| **Lignes fantômées** | Droiture, précision d'arrivée sur la cible, pénalité d'arc et de micro-oscillation |
-| **Ellipses dans des plans** | Fit d'ellipse par moindres carrés, régularité, fermeture de la boucle, inscription dans le plan |
-| **Entonnoirs** | Alignement des ellipses sur l'axe mineur |
-| **Perspective / boîtes** | Convergence des groupes d'arêtes vers un point de fuite cohérent |
+| **Cours** | Les 8 leçons du cursus, verrouillage progressif, échauffements tirés au sort dans les leçons 1-2 |
+| **Challenges** | Les 5 séries longues (250 boîtes, 250 cylindres, 25 textures, 25 roues, 100 coffres) — isolées parce qu'elles s'intercalent au cursus au lieu de le suivre |
+| **Exercices** | 16 exercices notés, imbriqués sous leur leçon |
+| **Anatomie** | Vidéo de démo + canvas libre côte à côte, sans notation (contenu tiers) |
+| **Dessin libre** | Page blanche, références déplaçables, aucun score |
 
-Chaque trait ressort avec un score sur 100, trois qualités synthétiques (Droiture / Fluidité / Précision), le détail des métriques brutes et un feedback qui **nomme la faute**.
+## Stack
 
-### Les cinq espaces
-
-- **Cours** — les 8 leçons du cursus, avec verrouillage progressif et échauffements tirés au sort dans les leçons 1-2
-- **Challenges** — les 5 séries longues (250 boîtes, 250 cylindres, 25 textures, 25 roues, 100 coffres), isolées parce qu'elles s'intercalent au cursus au lieu de le suivre
-- **Exercices** — 16 exercices praticables, imbriqués sous leur leçon
-- **Anatomie** — vidéo de démo + canvas de dessin libre côte à côte, sans notation
-- **Dessin libre** — page blanche avec références déplaçables
-
-### L'outil de dessin
-
-**5 brosses réellement distinctes**, pas de simples variations d'opacité :
-
-| Brosse | Rendu |
+| | |
 |---|---|
-| Plume | largeur suivant la pression du stylet |
-| Feutre | opaque, largeur constante, bouts carrés |
-| Crayon | passes multiples, grain fin |
-| Craie | grain marqué + semis de particules |
-| Aquarelle | passes larges très transparentes |
+| **Capture** | Pointer Events API (`pressure`, `tiltX/Y`, `timeStamp`), `getCoalescedEvents()` pour ne perdre aucun point |
+| **Analyse** | JavaScript pur — PCA, régression linéaire, fit d'ellipse par moindres carrés |
+| **Rendu** | Canvas 2D, tracé segment par segment pour la largeur variable |
+| **App** | Modules ES natifs, **zéro dépendance**, pas d'étape de build |
+| **Dev** | `server.mjs` — statique, `Cache-Control: no-store` |
 
-Taille (0.5→16) et opacité en jauges continues. Gomme au trait entier. **Chaque trait fige ses réglages au moment du tracé** — changer de brosse ne repeint jamais ce qui est déjà sur la page.
-
-Le grain des brosses utilise un PRNG déterministe : un même trait se redessine à l'identique à chaque frame, sinon il scintillerait à chaque redraw.
-
-### Références visuelles
-
-Fenêtres flottantes **déplaçables, redimensionnables et duplicables** : photos (upload ou URL) et vidéos YouTube, pour dessiner en gardant sa référence sous les yeux. La duplication permet de garder deux vues d'une même vidéo — une figée sur une pose, l'autre qui tourne.
-
----
-
-## Démarrer
+## Démarrage
 
 Un serveur local est nécessaire : `file://` bloque `fetch` et les modules ES.
 
@@ -76,59 +123,34 @@ Un serveur local est nécessaire : `file://` bloque `fetch` et les modules ES.
 npm start     # node server.mjs → http://localhost:8000
 ```
 
-Le serveur envoie `Cache-Control: no-store`. Les modules ES sont mis en cache très agressivement par les navigateurs, et sans ça une modification de `src/` peut ne pas être reprise au rechargement — on finit par déboguer du code périmé.
+Le serveur envoie `no-store` volontairement : les navigateurs mettent les modules ES en
+cache très agressivement, et sans ça une modification de `src/` peut ne pas être reprise
+au rechargement — on finit par déboguer du code périmé.
 
 ```bash
-npm test      # 45 tests de validateurs sur tracés synthétiques, sans navigateur
+npm test      # 45 tests de validateurs, sans navigateur
 ```
 
-Chaque règle de validation est couverte par un tracé « bon » **et** un tracé « mauvais ».
-
----
-
-## Contenu pédagogique
-
-**Le corpus Drawabox n'est pas inclus dans ce dépôt.**
-
-L'app lit son contenu depuis un `drawabox.json` (index structuré des leçons, exercices et images) accompagné de `lessons/`, `exercises/` et `content-fr/`. Ces fichiers contiennent le texte intégral du cours — environ 106 000 mots — qui reste la propriété de **Drawabox Art Instruction Inc.** Les republier ici reviendrait à redistribuer le cours ; ils sont donc volontairement exclus (voir [`.gitignore`](.gitignore)).
-
-Sans eux, l'app se lance et affiche un message d'erreur explicite à la place du parcours. Le moteur d'analyse, lui, est entièrement fonctionnel et testable (`npm test`).
-
-Le cours est **gratuit et excellent** — allez le lire à la source : **[drawabox.com](https://drawabox.com)**.
-
-Schéma attendu :
-
-```
-{ source, scraped_at, lesson_count, total_pages, exercise_count,
-  exercises: [ { id, lesson, name, title, url, file, n_images, images[], markdown } ],
-  lessons:   [ { id, part, part_name, title, url, n_pages,
-                 exercises: [ {id, title, file, url} ],
-                 pages: [ { page, url, section, n_images, images[], videos[], markdown } ] } ] }
-```
-
----
-
-## Architecture
-
-Vanilla JS, modules ES natifs, **zéro dépendance**. Pas de framework, pas d'étape de build.
+## Structure
 
 ```
 index.html              shell : Cours · Challenges · Pratique · Lecture
 server.mjs              serveur statique de dev (no-store)
 
 src/canvas/
-  capture.js            capture Pointer Events → points[] bruts
-  render.js             rendu papier, cibles, brosses (grain déterministe)
+  capture.js            Pointer Events → points[] bruts
+  render.js             papier, cibles, 5 brosses (grain déterministe)
 
-src/validators/
-  geometry.js           maths partagées : PCA, régression, arc, wobble
-  superimposed-lines.js
-  ghosted-lines.js
-  fixtures.js           tracés synthétiques
+src/validators/         le cœur — un module = un critère, testable isolément
+  geometry.js           primitives : PCA, régression, arc, wobble
+  ellipse-geometry.js   fit d'ellipse, degré, fermeture
+  superimposed-lines.js · ghosted-lines.js · ghosted-planes.js
+  ellipses-in-planes.js · funnels.js · markmaking.js
+  fixtures.js           tracés synthétiques (bons et mauvais)
   test.mjs              runner
 
 src/content/
-  loader.js             drawabox.json + traductions FR + rendu markdown
+  loader.js             contenu + traductions FR + rendu markdown
   progress.js           progression persistée (localStorage)
 
 src/ui/
@@ -139,18 +161,61 @@ src/ui/
   styles.css            thèmes soft / dark / light
 ```
 
-**Un validateur = un fichier isolé**, testable sans navigateur. Ajouter un exercice noté revient à écrire un module de validation et une entrée dans `MODES` — le reste de l'écran est commun.
+**Ajouter un exercice noté** = écrire un module de validation + une entrée dans `MODES`.
+Le reste de l'écran est commun.
 
----
+## Feuille de route
 
-## Bilingue FR / EN
+- [x] Capture stroke-level + validateur « lignes superposées » (preuve de l'approche)
+- [x] Chargement du contenu → sélection d'exercice avec consigne et images
+- [x] Validateurs ellipses, entonnoirs, plans, convergence en perspective
+- [x] Échauffements tirés au sort, progression et verrouillage
+- [x] Outil de dessin : brosses, gomme, références flottantes
+- [ ] Calibration empirique des seuils sur des tracés réels annotés
+- [ ] Feedback qualitatif par LLM en complément des règles géométriques
+- [ ] Fit d'ellipse avancé en WASM/OpenCV si les moindres carrés atteignent leurs limites
 
-Bascule FR/EN dans l'en-tête. Le contenu source est en anglais ; les traductions vivent à côté, sans jamais modifier les données d'origine. Repli automatique sur l'anglais avec un bandeau « traduction à venir » tant qu'une page n'est pas traduite.
+## Contenu pédagogique
 
----
+**Le corpus Drawabox n'est pas inclus dans ce dépôt.**
 
-## Crédits
+L'app lit son contenu depuis un `drawabox.json` accompagné de `lessons/`, `exercises/` et
+`content-fr/`. Ces fichiers contiennent le texte intégral du cours — environ 106 000 mots —
+qui reste la propriété de **Drawabox Art Instruction Inc.** Les republier ici reviendrait à
+redistribuer le cours ; ils sont donc volontairement exclus (voir [`.gitignore`](.gitignore)).
 
-- Cursus, texte pédagogique et images : **[Drawabox](https://drawabox.com)** — © Drawabox Art Instruction Inc. Cours gratuit, soutenez-le.
-- Série « Anatomy Quick Tips » : **[Sinix Design](https://www.youtube.com/@sinixdesign)** — lecture via l'embed YouTube officiel, contenu non redistribué.
-- Code de l'application : voir [`LICENSE`](LICENSE).
+Sans eux, l'app se lance et affiche un message d'erreur explicite à la place du parcours.
+**Le moteur d'analyse, lui, est entièrement fonctionnel et testable** (`npm test`).
+
+Le cours est gratuit et excellent — allez le lire à la source : **[drawabox.com](https://drawabox.com)**.
+
+<details>
+<summary>Schéma attendu de <code>drawabox.json</code></summary>
+
+```jsonc
+{ "source": "...", "scraped_at": "...", "lesson_count": 13,
+  "exercises": [
+    { "id": "...", "lesson": 1, "name": "superimposedlines",
+      "title": "...", "url": "...", "images": [], "markdown": "..." }
+  ],
+  "lessons": [
+    { "id": "1", "part": "part1", "part_name": "...", "title": "...",
+      "exercises": [ { "id": "...", "title": "...", "url": "..." } ],
+      "pages": [ { "page": 1, "section": "...", "images": [], "markdown": "..." } ] }
+  ] }
+```
+</details>
+
+## Notes
+
+**Seuils à calibrer.** Les critères géométriques sont implémentés et testés, mais leurs
+seuils restent empiriques. Un score n'est pas une évaluation officielle Drawabox : c'est
+un indicateur de régularité du geste, à confronter au [feedback de la communauté](https://drawabox.com/lesson/0/2/critique).
+
+**Crédits.** Cursus, texte pédagogique et images : **[Drawabox](https://drawabox.com)** —
+© Drawabox Art Instruction Inc. Cours gratuit, soutenez-le.
+Série « Anatomy Quick Tips » : **[Sinix Design](https://www.youtube.com/@sinixdesign)** —
+lecture via l'embed YouTube officiel, contenu non redistribué.
+
+Le code de l'application est sous [licence MIT](LICENSE) ; elle ne couvre pas le contenu
+pédagogique. Projet personnel, sans but lucratif.
