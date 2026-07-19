@@ -1,0 +1,17 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Corpus pédagogique Drawabox — NON REDISTRIBUABLE
+# ─────────────────────────────────────────────────────────────────────────────
+# Texte intégral des leçons/exercices récupéré depuis drawabox.com, et ses
+# traductions françaises (œuvre dérivée). © Drawabox Art Instruction Inc.
+# Récupéré pour usage d'étude personnel : ces fichiers restent en local et ne
+# sont pas publiés. Voir la section « Contenu pédagogique » du README.
+drawabox.json
+lessons/
+exercises/
+content-fr/
+
+# ─────────────────────────────────────────────────────────────────────────────
+node_modules/
+.DS_Store
+Thumbs.db
+*.log

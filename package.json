@@ -1,0 +1,11 @@
+{
+  "name": "howdrawabox",
+  "version": "0.3.0",
+  "description": "howdrawabox — entraîneur de dessin Drawabox avec analyse de tracé stroke-level en temps réel.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node src/validators/test.mjs"
+  },
+  "private": true
+}
